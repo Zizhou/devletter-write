@@ -1,0 +1,53 @@
+{% extends 'mybase.html' %}
+{% block head %}
+{% load staticfiles %}
+<script type="text/javascript">
+
+$(document).ready(function(){
+  $("#text_1").keyup(function(){
+var something = $('#text_1').val();
+$('#text1').html(something);
+  });
+});
+
+$(document).ready(function(){
+  $("#text2").keyup(function(){
+var something = $('#text2').val();
+$('#text2').html(something);
+  });
+});
+
+$(document).ready(function(){
+  $("#game-drop").click(function(){
+var something = $('#game-drop').val();
+$('#game').html(something);
+  });
+});
+
+
+</script>
+
+{% endblock %}
+{% block pagetitle %}
+FORM LETTER
+{% endblock %}
+
+{% block body %}
+You are writing a letter for {{devname}}<br>
+The choices for games are 
+<select name = 'game-drop' id = 'game-drop' class = 'click'>
+{% for g in gamelist %}
+    {% if g == game %}
+    <option value = '{{g.name}}' selected = 'selected'>{{g.name}}</option>
+    {% else %}
+    <option value = '{{g.name}}'>{{g.name}}</option>
+    {% endif %}
+{% endfor %}
+</select>
+<br>
+You are going to tell them <input type = 'text' name = 'text_1' id = 'text_1' class = 'input' ><br>
+Your name is {{sig}}<br><br>
+PREVIEW:<br>
+{{template | safe}}
+
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'mybase.html' %}
+{% block head %}
+{% load staticfiles %}
+<script>
+$(document).ready(function(){
+  $("#input1").keyup(function(){
+var something = $('#input1').val();
+$('#replace').html(something);
+  });
+});
+
+$(document).ready(function(){
+  $("#input2").keyup(function(){
+var something = $('#input2').val();
+$('#replace2').html(something);
+  });
+});
+
+</script>
+
+{% endblock %}
+{% block pagetitle %}
+{% endblock %}
+
+{% block body %}
+
+<input id="input1" name = "input1" type="text" class="input"/><br/>
+
+<div id="replace1"></div><br/>
+
+{% endblock %}

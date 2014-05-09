@@ -3,6 +3,7 @@ from django.conf.urls import patterns, url
 from write import views
 
 urlpatterns = patterns('',
-#    url(r'^$', views.main_page, name = 'main'),
+    url(r'(?P<letter_id>\d+)/$', views.letter, name = 'letter'),
+    url(r'^$', views.example, name = 'example'),
 
 )
