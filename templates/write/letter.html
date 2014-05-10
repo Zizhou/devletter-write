@@ -1,6 +1,8 @@
 {% extends 'mybase.html' %}
 {% block head %}
 {% load staticfiles %}
+
+<!-- this does something, ah, magical with jQuery and makes the live preview -->
 <script type="text/javascript">
 
 $(document).ready(function(){
@@ -11,8 +13,8 @@ $('#text1').html(something);
 });
 
 $(document).ready(function(){
-  $("#text2").keyup(function(){
-var something = $('#text2').val();
+  $("#text_2").keyup(function(){
+var something = $('#text_2').val();
 $('#text2').html(something);
   });
 });
@@ -24,30 +26,76 @@ $('#game').html(something);
   });
 });
 
+</script>
+<!--loads existing text into the template on page loading -->
+<script>
+function textload(){
+    var something = $('#game-drop').val();
+    $('#game').html(something);
+    var something = $('#text_1').val();
+    $('#text1').html(something);
+    var something = $('#text_2').val();
+    $('#text2').html(something);
+
+};
 
 </script>
-
 {% endblock %}
 {% block pagetitle %}
-FORM LETTER
+FORM LETTER for {{devname}}
+<form action = '{% url 'write:letter' letter.id %}' method = 'post' name = 'templateform'>
+{% csrf_token %}
+    <select name = 'template-drop' id = 'template-drop' name = 'template-drop' class = 'click'>
+    {% for t in template_list %}
+        {% if t.name == letter.template.name %}
+        <option value = '{{t.name}}' selected = 'selected'>{{t.name}}</option>
+        {% else %}
+        <option value = '{{t.name}}'>{{t.name}}</option>
+        {% endif %}
+    {% endfor %}
+
+    <input type = 'submit' value = 'Change Template'>
+</form>
 {% endblock %}
 
 {% block body %}
-You are writing a letter for {{devname}}<br>
-The choices for games are 
-<select name = 'game-drop' id = 'game-drop' class = 'click'>
-{% for g in gamelist %}
-    {% if g == game %}
-    <option value = '{{g.name}}' selected = 'selected'>{{g.name}}</option>
-    {% else %}
-    <option value = '{{g.name}}'>{{g.name}}</option>
+<div  style = 'width:48%;height:75%;float:left;background-color:#F7C6EA;padding:4px;' >
+<form action = '{% url 'write:send' %}' method = 'post' name = 'letterform' >
+    {% csrf_token %}
+    The choices for games are 
+    <select name = 'game-drop' id = 'game-drop' class = 'click'>
+    {% for g in gamelist %}
+        {% if g == game %}
+        <option value = '{{g.name}}' selected = 'selected'>{{g.name}}</option>
+        {% else %}
+        <option value = '{{g.name}}'>{{g.name}}</option>
+        {% endif %}
+    {% endfor %}
+    </select>
+    <br>
+    You are going to tell them 
+    <br>
+    <textarea id = 'text_1' name = 'text_1' class = 'input' cols= '40' rows= '4'>
+{{text1}}</textarea>
+    <br>
+    {% if display_text2 %}
+    You are also going to tell them 
+    <br>
+    <textarea id = 'text_2' name = 'text_2' class = 'input' cols= '40' rows= '4'>
+{{text2}}</textarea>
+    <br>
     {% endif %}
-{% endfor %}
-</select>
-<br>
-You are going to tell them <input type = 'text' name = 'text_1' id = 'text_1' class = 'input' ><br>
-Your name is {{sig}}<br><br>
+
+<div style = 'float:center'>
+<input type = 'submit' value = 'Write that letter!'>
+</div>
+</form>
+</div>
+
+<div style = 'width:4px;height:75%;float:left;'></div>
+<div style = 'width:48%;height:75%;float:left;background-color:#F7C6EA;padding:4px;'>
 PREVIEW:<br>
 {{template | safe}}
-
+<style onload="textload()"></style>
+</div>
 {% endblock %}
