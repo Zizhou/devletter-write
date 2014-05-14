@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from submit.models import Game, Developer
 from display.models import Letter, UserProfile, Template
 
+from write import mailBotIMAP
+
 # Create your views here.
 
 def example(request):
@@ -12,6 +14,9 @@ def example(request):
 @login_required
 def send(request):
     if request.method == 'POST' and request.POST.get('letter_id'):
+        #user profile shortcut
+        up = UserProfile.objects.get(user_id = request.user.id) 
+        
         letter = Letter.objects.get(id = request.POST.get('letter_id'))
         letter.game = Game.objects.get(name = request.POST.get('game-drop'))
         letter.text1 = request.POST.get('text_1')
@@ -20,11 +25,10 @@ def send(request):
         letter.written = True
         letter.save()
 
-        complete_letter = send_template(letter)
+        complete_letter = send_template(letter, up)
+
         next_in_queue = False
         next_letter = 0
-        #user profile shortcut
-        up = UserProfile.objects.get(user_id = request.user.id) 
         if up.devlist.exclude(written = True).count() > 0:
             next_in_queue = True
             next_letter = up.devlist.exclude(written = True)[0].id
@@ -83,6 +87,7 @@ def preview_template(template, form):
     formated = formated.replace('{game}', '<span id = "game">GAME TITLE HERE</span>')
     return formated.format(**form)
 
-def send_template(letter):
-    
-    return '''TODO temporary letter'''
+def send_template(letter, user_profile):
+    mailer = mailBotIMAP.pack_MIME(letter, user_profile)
+    mailBotIMAP.send_draft(mailer)
+    return str(mailer._payload[0])
