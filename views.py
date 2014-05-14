@@ -1,16 +1,44 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 
+from submit.models import Game, Developer
 from display.models import Letter, UserProfile, Template
 
 # Create your views here.
 
 def example(request):
     return render(request, 'write/example.html')
+
 @login_required
 def send(request):
-    return render(request, 'write/send.html')
+    if request.method == 'POST' and request.POST.get('letter_id'):
+        letter = Letter.objects.get(id = request.POST.get('letter_id'))
+        letter.game = Game.objects.get(name = request.POST.get('game-drop'))
+        letter.text1 = request.POST.get('text_1')
+        if request.POST.get('text_2'):
+            letter.text2 = request.POST.get('text_2')
+        letter.written = True
+        letter.save()
 
+        complete_letter = send_template(letter)
+        next_in_queue = False
+        next_letter = 0
+        #user profile shortcut
+        up = UserProfile.objects.get(user_id = request.user.id) 
+        if up.devlist.exclude(written = True).count() > 0:
+            next_in_queue = True
+            next_letter = up.devlist.exclude(written = True)[0].id
+
+        print 'next_letter is ' + str(next_letter)
+        context = {
+        'next_in_queue': next_in_queue,
+        'next_letter': next_letter,
+        'letter' : complete_letter,
+        }
+
+        return render(request, 'write/send.html', context)
+
+    return render(request, 'write/example.html')
 @login_required
 def letter(request, letter_id):
 
@@ -55,3 +83,6 @@ def preview_template(template, form):
     formated = formated.replace('{game}', '<span id = "game">GAME TITLE HERE</span>')
     return formated.format(**form)
 
+def send_template(letter):
+    
+    return '''TODO temporary letter'''

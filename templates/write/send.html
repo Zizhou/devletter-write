@@ -8,5 +8,16 @@
 
 
 {% block body %}
-
+<div style = 'height:50%;width:100%;float:center;background-color:#F7C6EA;'>
+{{letter}}
+</div>
+<div style = 'height:4px;width:100%;float:ceneter;background-color:white;'></div>
+<div style= 'height:20%;width:30%;background-color:#F7C6EA;'>
+{{next_letter}}<p>
+{% if next_in_queue  %}
+<a href = '{% url 'write:letter' next_letter %}'>Next in queue</a>
+{% else %}
+<a href = '{% url 'display:main' %}'>Add more to queue!</a>
+{% endif %}
+</div>
 {% endblock %}

@@ -42,7 +42,12 @@ function textload(){
 </script>
 {% endblock %}
 {% block pagetitle %}
-FORM LETTER for {{devname}}
+{% if letter.written %}
+<span style = 'color:red'>WARNING: LETTER HAS ALREADY BEEN WRITTEN</span>
+<br>
+{% endif %}
+
+Form Letter for <span style = 'font-style:italic'>{{devname}}</span>
 <form action = '{% url 'write:letter' letter.id %}' method = 'post' name = 'templateform'>
 {% csrf_token %}
     <select name = 'template-drop' id = 'template-drop' name = 'template-drop' class = 'click'>
@@ -87,6 +92,7 @@ FORM LETTER for {{devname}}
     {% endif %}
 
 <div style = 'float:center'>
+<input type = 'hidden' name = 'letter_id' value = {{letter.id}}>
 <input type = 'submit' value = 'Write that letter!'>
 </div>
 </form>
@@ -94,7 +100,7 @@ FORM LETTER for {{devname}}
 
 <div style = 'width:4px;height:75%;float:left;'></div>
 <div style = 'width:48%;height:75%;float:left;background-color:#F7C6EA;padding:4px;'>
-PREVIEW:<br>
+PREVIEW:<p>
 {{template | safe}}
 <style onload="textload()"></style>
 </div>
