@@ -1,0 +1,4 @@
+Need to add the following items to settings.py:
+
+ROBOT_MAILER = gmail login
+ROBOT_PASSWORD = gmail password (because I'm still too lazy to learn OAuth)
